@@ -39,7 +39,7 @@ class RelationsActiveRecord extends CActiveRecord {
 	protected $_insert_commands=array ();
 
 	// Emulate cascade on delete if the DB does not support it.
-	protected $cascade_on_delete=false;
+	protected $_cascade_on_delete=false;
 
 	/**
 	 * Used for mapping the many to many relations with a pivot class and/or a
@@ -273,7 +273,7 @@ class RelationsActiveRecord extends CActiveRecord {
 							$this->_insert_commands[]=array (
 								'table' => $this->metaData->relations[$relation_name]->getJunctionTableName(),
 								'columns' => array (
-									$relation_key_column => function () use ($this_var, $primary_key) { return $this->$primary_key; },
+									$relation_key_column => function () use ($this_var, $primary_key) { return $this_var->$primary_key; },
 									$remote_key_column => $id,
 								),
 							);
@@ -453,14 +453,14 @@ class RelationsActiveRecord extends CActiveRecord {
 	}
 
 	public function cascade ($cascade_setting) {
-		$this->cascade_on_delete=$cascade_setting;
+		$this->_cascade_on_delete=$cascade_setting;
 	}
 
 	/**
 	 * Emulates the cascade delete if the cascade variable is set to true.
 	 */
 	protected function beforeDelete () {
-		if (!$this->cascade_on_delete)
+		if (!$this->_cascade_on_delete)
 			return parent::beforeDelete();
 		// start transation.
 		// Itterate through the relations, issue deletes for Has One, Has
